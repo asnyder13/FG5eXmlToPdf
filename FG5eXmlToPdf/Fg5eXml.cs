@@ -21,7 +21,7 @@ namespace FG5eXmlToPDF
             var characters = from elem in theXML.Root.Elements() where elem.Name == "character" select elem;
             var chars = new List<ICharacter>();
             foreach (var character in characters)
-            { 
+            {
                 chars.Add(LoadCharacter(character));
             }
             return chars;
@@ -136,7 +136,7 @@ namespace FG5eXmlToPDF
                     }
                 }
             }
-            
+
             return character;
 
 
@@ -166,7 +166,7 @@ namespace FG5eXmlToPDF
                     //Console.WriteLine("Could not parse coin: {0}", coin);
                 }
             }
-            
+
         }
 
         private static List<XElement> XPathElementList(string xpath)
@@ -239,7 +239,7 @@ namespace FG5eXmlToPDF
 
 
         /**
-         * 
+         *
          * **/
         private class WeaponComparator : IEqualityComparer<Weapon>
         {
@@ -254,11 +254,11 @@ namespace FG5eXmlToPDF
                 weapon.Damages.Sort();
                 foreach (var damage in weapon.Damages)
                 {
-                    if (damage.Bonus != null) 
+                    if (damage.Bonus != null)
                         hash = hash ^ damage.Bonus.GetHashCode();
-                    if (damage.Dice != null) 
+                    if (damage.Dice != null)
                         hash = hash ^ damage.Dice.GetHashCode();
-                    if (damage.Type != null) 
+                    if (damage.Type != null)
                         hash = hash ^ damage.Type.GetHashCode();
                     if (damage.Stat != null)
                         hash = hash ^ damage.Stat.GetHashCode();
@@ -345,7 +345,7 @@ namespace FG5eXmlToPDF
                 catch (Exception)
                 {
                     Console.WriteLine("Could not get hitDice for class: {0}", charClass);
-                }            
+                }
             }
             character.HitDice = sb.ToString();
         }
@@ -421,7 +421,7 @@ namespace FG5eXmlToPDF
             {
                 result = string.IsNullOrEmpty(result) ? "" : result + ", ";
                 result += $"{dieSet.Count()}{dieSet.Key}";
-                
+
             }
             return result;
         }
