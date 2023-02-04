@@ -12,11 +12,11 @@ namespace FG5eXmlToPDF
 {
     public static class FG5ePdf
     {
-        public static void Write(ICharacter character, string outFile)
+        public static Stream Write(ICharacter character, Stream stream)
         {
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("FG5eXmlToPdf.DnD_5E_CharacterSheet - Form Fillable.pdf");
-            var pdfReader = new PdfReader(stream);
-            var stamper = new PdfStamper(pdfReader, new FileStream(outFile, FileMode.Create));
+            var templateStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("FG5eXmlToPdf.DnD_5E_CharacterSheet - Form Fillable.pdf");
+            var pdfReader = new PdfReader(templateStream);
+            var stamper = new PdfStamper(pdfReader, stream);
             var form = stamper.AcroFields;
 
             var levels = GetLevels(character);
@@ -34,7 +34,6 @@ namespace FG5eXmlToPDF
             SetHitDice(character, form);
             SetCoins(character, form);
 
-
             var group = character.PowerGroup.FirstOrDefault(x =>
                 string.Equals(x.Name, "Spells", StringComparison.OrdinalIgnoreCase));
             var magicClass = character.Classes.Where(x => x.CasterLevelinvmult > 0 || x.CasterPactMagic > 0).ToList().FirstOrDefault();
@@ -45,7 +44,7 @@ namespace FG5eXmlToPDF
             }
             var slotString = magicClass?.CasterPactMagic > 0 ? "pactmagicslots" : "spellslots";
             if (group?.Powers.Count > 0)
-            {              
+            {
                 for (var level = 0; level <= group?.Powers.Max(x => x.Level); level++)
                 {
                     var n = 0;
@@ -61,8 +60,14 @@ namespace FG5eXmlToPDF
                 }
             }
 
-
             stamper.Close();
+            return stream;
+        }
+
+        public static void Write(ICharacter character, string outFile)
+        {
+            using var file = new FileStream(outFile, FileMode.Create);
+            Write(character, file);
         }
 
         private static void SetCoins(ICharacter character, AcroFields form)
@@ -118,8 +123,9 @@ namespace FG5eXmlToPDF
                 form.SetField($"Wpn{n} Damage", createDamageString(character, weapon));
                 n++;
             }
-            String additionalWeapons =  "";
-            foreach (var weapon in character.Weapons.Skip(3)){
+            String additionalWeapons = "";
+            foreach (var weapon in character.Weapons.Skip(3))
+            {
                 additionalWeapons += weapon.Name + ";  " + "Atk +" + createAttackBonus(character, weapon) + ";  " + createDamageString(character, weapon) + Environment.NewLine;
             }
             form.SetFieldProperty("AttacksSpellcasting", "textsize", 8f, null);
@@ -197,7 +203,7 @@ namespace FG5eXmlToPDF
 
         private static void SetHitDice(ICharacter character, AcroFields form)
         {
-            form.SetField("HDTotal",character.HitDice);
+            form.SetField("HDTotal", character.HitDice);
         }
 
         private static string GetLevels(ICharacter character)
@@ -252,7 +258,7 @@ namespace FG5eXmlToPDF
         private static Ability GetAbilityByName(Character5e character, string abulity)
         {
             return character.Abilities.FirstOrDefault(x => x.Name == abulity);
-        } 
+        }
         #endregion
     }
 }

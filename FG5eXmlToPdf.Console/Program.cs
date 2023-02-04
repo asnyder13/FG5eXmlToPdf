@@ -28,6 +28,7 @@ namespace FG5eXmlToPdf.Console
                             List<ICharacter> characters = FG5eXml.LoadCharacters(arg);
                             if (characters.Count() == 0)
                                 WriteLine($"No characters found!");
+
                             foreach (ICharacter character in characters)
                             {
                                 string? charName = character.Properities.FirstOrDefault((x) => x.Name == "Name")?.Value;

@@ -13,7 +13,7 @@ namespace FG5eXmlToPdf.Tests
         private readonly string _sourceDirectory = $@"{Directory.GetCurrentDirectory()}\XML";
         //[TestMethod]
         public void ReadWriteAllTest()
-        {               
+        {
             foreach (var file in Directory.EnumerateFiles(_sourceDirectory, "*.xml"))
             {
                 GenerateSheet(file, _sourceDirectory);
